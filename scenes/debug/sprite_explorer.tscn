@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://bvaj4slthes6f"]
+[gd_scene format=3 uid="uid://bvaj4slthes6f"]
 
 [ext_resource type="Theme" uid="uid://kqvjkouj0io8" path="res://assets/ui/main.tres" id="1_8xp7a"]
 [ext_resource type="Script" uid="uid://cyhv65lqhwtul" path="res://scenes/debug/sprite_explorer.gd" id="2_gueus"]
@@ -140,7 +140,7 @@ region = Rect2(16, 80, 16, 16)
 atlas = ExtResource("3_8xp7a")
 region = Rect2(32, 80, 16, 16)
 
-[node name="SpriteExplorer" type="Control"]
+[node name="SpriteExplorer" type="Control" unique_id=1523335415]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -150,7 +150,7 @@ grow_vertical = 2
 theme = ExtResource("1_8xp7a")
 script = ExtResource("2_gueus")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=735970040]
 custom_minimum_size = Vector2(500, 300)
 layout_mode = 1
 anchors_preset = 15
@@ -159,10 +159,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=1005829368]
 layout_mode = 2
 
-[node name="Tabs" type="TabBar" parent="PanelContainer/VBoxContainer"]
+[node name="Tabs" type="TabBar" parent="PanelContainer/VBoxContainer" unique_id=731412250]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
@@ -172,18 +172,18 @@ tab_0/title = "Items"
 tab_1/title = "Characters"
 tab_2/title = "World"
 
-[node name="SearchField" type="LineEdit" parent="PanelContainer/VBoxContainer"]
+[node name="SearchField" type="LineEdit" parent="PanelContainer/VBoxContainer" unique_id=1726483664]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "search..."
 
-[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer" unique_id=1592931483]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Results" type="ItemList" parent="PanelContainer/VBoxContainer/ScrollContainer"]
+[node name="Results" type="ItemList" parent="PanelContainer/VBoxContainer/ScrollContainer" unique_id=695051458]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

@@ -90,7 +90,9 @@ func _route(method: String, path: String, body: String) -> Dictionary:
 			"/run":
 				return _json_ok(_get_run_state())
 			"/scene":
-				return _json_ok(_get_scene_tree())
+				return _json_ok(_get_scene_tree(8))
+			"/scene/deep":
+				return _json_ok(_get_scene_tree(12))
 			_:
 				return _json_error(404, "Not found: %s" % path)
 
@@ -217,11 +219,11 @@ func _v2i_dict(v: Vector2i) -> Dictionary:
 	return {"x": v.x, "y": v.y}
 
 
-func _get_scene_tree() -> Dictionary:
+func _get_scene_tree(depth: int = 8) -> Dictionary:
 	var root := get_tree().current_scene
 	if not root:
 		return {"error": "No current scene"}
-	return {"root": _serialize_node(root, 6)}
+	return {"root": _serialize_node(root, depth)}
 
 
 func _serialize_node(node: Node, max_depth: int) -> Dictionary:

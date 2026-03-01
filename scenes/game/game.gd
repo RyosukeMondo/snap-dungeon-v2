@@ -108,13 +108,16 @@ func _initialize() -> void:
 
 func _setup_touch_action_bar() -> void:
 	var bar := TouchActionBar.new()
+	bar.anchor_top = 1.0
 	bar.anchor_bottom = 1.0
 	bar.anchor_left = 0.0
 	bar.anchor_right = 1.0
-	bar.offset_bottom = 0
 	bar.offset_top = -48
+	bar.offset_bottom = 0
+	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bar.action_pressed.connect(_on_touch_action)
-	hud.add_child(bar)
+	var canvas_layer: CanvasLayer = %UI
+	canvas_layer.add_child(bar)
 
 
 func _on_touch_action(action_name: StringName) -> void:

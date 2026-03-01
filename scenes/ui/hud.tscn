@@ -55,7 +55,7 @@ layout_mode = 2
 [node name="Title1" type="Label" parent="MainHBox/LeftPanel/UpperStatusPanel/VBoxContainer"]
 layout_mode = 2
 theme_type_variation = &"TitleLabel"
-text = "Godot Roguelike"
+text = "Snap Dungeon"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="MainHBox/LeftPanel/UpperStatusPanel/VBoxContainer"]

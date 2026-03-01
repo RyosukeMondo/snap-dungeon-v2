@@ -82,13 +82,15 @@ func _route(method: String, path: String, body: String) -> Dictionary:
 	if method == "GET":
 		match path:
 			"/health":
-				return _json_ok({"status": "ok", "version": "0.2.0"})
+				return _json_ok({"status": "ok", "version": "0.3.0"})
 			"/state":
 				return _json_ok(_get_full_state())
 			"/entities":
 				return _json_ok(_get_entities())
 			"/run":
 				return _json_ok(_get_run_state())
+			"/scene":
+				return _json_ok(_get_scene_tree())
 			_:
 				return _json_error(404, "Not found: %s" % path)
 
@@ -206,3 +208,49 @@ func _send_response(peer: StreamPeerTCP, response: Dictionary) -> void:
 
 func _v2i_dict(v: Vector2i) -> Dictionary:
 	return {"x": v.x, "y": v.y}
+
+
+func _get_scene_tree() -> Dictionary:
+	var root := get_tree().current_scene
+	if not root:
+		return {"error": "No current scene"}
+	return {"root": _serialize_node(root, 3)}
+
+
+func _serialize_node(node: Node, max_depth: int) -> Dictionary:
+	var data: Dictionary = {
+		"name": node.name,
+		"class": node.get_class(),
+	}
+
+	if node is Control:
+		var ctrl := node as Control
+		data["visible"] = ctrl.visible
+		data["position"] = {"x": ctrl.global_position.x, "y": ctrl.global_position.y}
+		data["size"] = {"w": ctrl.size.x, "h": ctrl.size.y}
+		data["anchors"] = {
+			"top": ctrl.anchor_top,
+			"bottom": ctrl.anchor_bottom,
+			"left": ctrl.anchor_left,
+			"right": ctrl.anchor_right,
+		}
+
+	if node is Node2D:
+		var n2d := node as Node2D
+		data["visible"] = n2d.visible
+		data["position"] = {"x": n2d.global_position.x, "y": n2d.global_position.y}
+
+	if node is Button:
+		data["text"] = (node as Button).text
+	if node is Label:
+		data["text"] = (node as Label).text
+	if node is RichTextLabel:
+		data["text"] = (node as RichTextLabel).text.substr(0, 120)
+
+	if max_depth > 0 and node.get_child_count() > 0:
+		var children_arr: Array = []
+		for child: Node in node.get_children():
+			children_arr.append(_serialize_node(child, max_depth - 1))
+		data["children"] = children_arr
+
+	return data

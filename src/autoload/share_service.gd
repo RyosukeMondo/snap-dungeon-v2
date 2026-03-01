@@ -3,7 +3,7 @@ extends Node
 
 func share_run(run_state: RunState) -> void:
 	var card := ShareCardData.from_run(run_state, PersistenceManager.profile)
-	var text := ShareCardRenderer.render_text_card(card)
+	var text := RunSymbolizer.symbolize(card)
 
 	if _has_native_share():
 		_native_share(text)

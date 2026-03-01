@@ -101,6 +101,13 @@ func _route(method: String, path: String, body: String) -> Dictionary:
 			"/game/start":
 				World.start_daily_run()
 				return _json_ok({"action": "start_daily_run"})
+			"/game/freeplay":
+				get_tree().change_scene_to_file("res://scenes/game/game.tscn")
+				return _json_ok({"action": "freeplay"})
+			"/game/daily":
+				World.start_daily_run()
+				get_tree().change_scene_to_file("res://scenes/game/game.tscn")
+				return _json_ok({"action": "daily"})
 			_:
 				return _json_error(404, "Not found: %s" % path)
 
@@ -214,7 +221,7 @@ func _get_scene_tree() -> Dictionary:
 	var root := get_tree().current_scene
 	if not root:
 		return {"error": "No current scene"}
-	return {"root": _serialize_node(root, 3)}
+	return {"root": _serialize_node(root, 6)}
 
 
 func _serialize_node(node: Node, max_depth: int) -> Dictionary:

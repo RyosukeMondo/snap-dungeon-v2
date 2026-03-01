@@ -4,28 +4,12 @@
     {
       "label": "Run Godot Project",
       "type": "shell",
-      "command": "/Applications/Godot.app/Contents/MacOS/Godot",
+      "command": "godot",
       "args": ["--path", "${workspaceFolder}", "--debug"],
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "Run Inventory Tester",
-      "type": "shell",
-      "command": "/Applications/Godot.app/Contents/MacOS/Godot",
-      "args": [
-        "--path",
-        "${workspaceFolder}",
-        "--debug",
-        "scenes/ui/inventory_modal.tscn"
-      ],
-      "group": "build",
       "presentation": {
         "reveal": "always",
         "panel": "shared"

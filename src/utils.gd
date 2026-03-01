@@ -118,6 +118,23 @@ static func levenshtein_distance(a: String, b: String) -> int:
 	return matrix[m][n]
 
 
+## Fisher-Yates shuffle using Dice._rng for deterministic results.
+static func shuffle_with_rng(array: Array) -> Array:
+	var result := array.duplicate()
+	for i in range(result.size() - 1, 0, -1):
+		var j := Dice._rng.randi_range(0, i)
+		var tmp: Variant = result[i]
+		result[i] = result[j]
+		result[j] = tmp
+	return result
+
+
+## Picks a random element from an array using Dice._rng.
+static func pick_random_with_rng(array: Array) -> Variant:
+	assert(not array.is_empty(), "Cannot pick from empty array")
+	return array[Dice._rng.randi() % array.size()]
+
+
 static func calculate_trajectory(from: Vector2i, to: Vector2i) -> Array[Vector2i]:
 	var trajectory: Array[Vector2i] = []
 

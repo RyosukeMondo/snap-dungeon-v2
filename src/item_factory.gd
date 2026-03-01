@@ -278,7 +278,7 @@ static func create_item(slug: StringName) -> Item:
 	item.max_children = Utils.to_int(data.max_children) if data.has(&"max_children") else 0
 	item.armor_class = Utils.to_int(data.armor_class)
 	item.resistances = data.resistances
-	item.sprite_name = Utils.array_of_stringnames(data.sprite_name).pick_random()
+	item.sprite_name = Utils.pick_random_with_rng(Utils.array_of_stringnames(data.sprite_name))
 	item.aoe_config = data.aoe
 	item.nutrition = Utils.to_int(data.nutrition)
 	item.delicious = data.delicious

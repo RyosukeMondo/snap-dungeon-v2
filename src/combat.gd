@@ -94,7 +94,7 @@ static func resolve_melee_attack(attacker: Monster, defender: Monster) -> MeleeA
 	Log.d("    Equipped item: %s" % item)
 	var base_damage := Dice.roll(item.damage[0], item.damage[1]) if item else 1
 
-	var damage_type := item.damage_types.pick_random() as Damage.Type if item else Damage.Type.BLUNT
+	var damage_type := Utils.pick_random_with_rng(item.damage_types) as Damage.Type if item else Damage.Type.BLUNT
 	Log.d("    Damage type: %s" % Damage.Type.keys()[damage_type])
 
 	var modifier := 0
@@ -249,14 +249,14 @@ static func resolve_ranged_attack(
 			Log.e("  Weapon %s needs ammo but got null" % weapon)
 			return null
 		damage_roll = Dice.roll(ammo.damage[0], ammo.damage[1])
-		result.damage_type = ammo.damage_types.pick_random()
+		result.damage_type = Utils.pick_random_with_rng(ammo.damage_types)
 	else:
 		Log.i("  Calculating damage from weapon %s" % weapon)
 		if ammo:
 			Log.e("  Weapon %s does not need ammo but got %s" % [weapon, ammo])
 			return null
 		damage_roll = Dice.roll(weapon.damage[0], weapon.damage[1])
-		result.damage_type = weapon.damage_types.pick_random()
+		result.damage_type = Utils.pick_random_with_rng(weapon.damage_types)
 
 	result.damage = damage_roll + bonus
 	Log.i(
@@ -326,7 +326,7 @@ static func resolve_ranged_attack(
 					hit_chance = 100.0  # Full height obstacles always get hit
 
 			Log.i("    Hit chance based on height: %.2f%%" % hit_chance)
-			var roll := randf() * 100.0
+			var roll := Dice.percent()
 			var is_hit := roll <= hit_chance
 			Log.i("    Rolled %.2f vs %.2f: %s" % [roll, hit_chance, "HIT" if is_hit else "MISS"])
 

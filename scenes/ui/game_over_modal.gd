@@ -22,16 +22,15 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_game_ended() -> void:
-	# Display final stats
-	stats_label.text = (
-		"""
-	Final Stats:
-	HP: %d / %d
-	"""
-		% [World.player.hp, World.player.max_hp]
-	)
-
-	level_label.text = "You made it to depth %d!" % World.max_depth
+	if World.run_state:
+		stats_label.text = (
+			"Score: %d\nFloor: %d\nTurns: %d\nKills: %d"
+			% [World.run_state.score, World.run_state.current_floor, World.run_state.turns_taken, World.run_state.kills]
+		)
+		level_label.text = "Daily Dungeon - Depth %d" % World.max_depth
+	else:
+		stats_label.text = "HP: %d / %d" % [World.player.hp, World.player.max_hp]
+		level_label.text = "You made it to depth %d!" % World.max_depth
 
 
 func _on_main_menu_button_pressed() -> void:

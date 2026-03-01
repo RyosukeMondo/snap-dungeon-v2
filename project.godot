@@ -14,7 +14,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="Godot Roguelike Example"
+config/name="SnapDungeon"
 run/main_scene="res://scenes/menu/main_menu.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 boot_splash/bg_color=Color(0.0852449, 0.0852449, 0.0852449, 1)
@@ -27,6 +27,14 @@ Modals="*res://src/modals.gd"
 ItemTiles="*res://src/item_tiles.gd"
 WorldTiles="*res://src/world_tiles.gd"
 CharacterTiles="*res://src/character_tiles.gd"
+BackendService="*res://src/autoload/backend_service.gd"
+PersistenceManager="*res://src/autoload/persistence_manager.gd"
+AudioManager="*res://src/autoload/audio_manager.gd"
+ShareService="*res://src/autoload/share_service.gd"
+DebugServer="*res://src/autoload/debug_server.gd"
+PurchaseManager="*res://src/autoload/purchase_manager.gd"
+AdManager="*res://src/autoload/ad_manager.gd"
+ConsentManager="*res://src/autoload/consent_manager.gd"
 
 [debug]
 
@@ -37,14 +45,13 @@ gdscript/warnings/unsafe_call_argument=1
 
 [display]
 
-window/size/viewport_width=576
-window/size/viewport_height=324
-window/size/window_width_override=1512
-window/size/window_height_override=949
-window/stretch/aspect="expand"
-window/stretch/scale=2.0
-window/stretch/scale_mode="integer"
+window/size/viewport_width=256
+window/size/viewport_height=416
+window/size/window_width_override=512
+window/size/window_height_override=832
+window/stretch/aspect="keep"
 window/dpi/allow_hidpi=false
+window/handheld/orientation=1
 
 [file_customization]
 

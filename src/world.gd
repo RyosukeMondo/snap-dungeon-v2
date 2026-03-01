@@ -13,6 +13,11 @@ signal turn_started
 signal turn_ended
 signal game_ended
 signal energy_updated(monster: Monster)
+signal run_started(seed_value: int)
+signal run_ended(victory: bool, score: int)
+signal show_floor_transition(floor_number: int)
+signal show_leaderboard
+signal auth_completed(uid: String)
 
 # Like NetHack, we world_plan the dungeon in advance, but levels are only created when
 # they are first visited.
@@ -34,6 +39,10 @@ var game_over: bool = false
 # Keep track of the max depth reached
 var max_depth: int = 1
 
+# Daily run state
+var daily_seed: int = -1
+var run_state: RunState
+
 # The player's faction affinity
 var faction_affinities: Dictionary = {
 	Factions.Type.HUMAN: 100,  # There could be different human factions with different affinities
@@ -44,9 +53,9 @@ var faction_affinities: Dictionary = {
 
 
 func _init() -> void:
-	Log.i("===========================")
-	Log.i("= Godot Roguelike Example =")
-	Log.i("===========================")
+	Log.i("================")
+	Log.i("= Snap Dungeon =")
+	Log.i("================")
 	Log.i("")
 
 
@@ -54,7 +63,7 @@ func _ready() -> void:
 	initialize()
 
 
-func initialize() -> void:
+func initialize(role: Roles.Type = Roles.Type.KNIGHT, slug: StringName = &"knight") -> void:
 	Log.i("Initializing world...")
 
 	# Initialize all vars
@@ -67,15 +76,15 @@ func initialize() -> void:
 	Log.i("World world_plan created: %s" % world_plan)
 
 	# Create the player with starting equipment
-	# TODO: Choose role based at main menu
-	player = MonsterFactory.create_monster(&"knight", Roles.Type.KNIGHT)
-	Roles.equip_monster(player, Roles.Type.KNIGHT)
+	player = MonsterFactory.create_monster(slug, role)
+	Roles.equip_monster(player, role)
 	Log.i("Player created: %s" % player)
 
 	# Create the first level
 	maps.clear()
 	var plan := world_plan.get_first_level_plan()
-	var map := _generate_map(plan)
+	var floor_seed := SeedFactory.floor_seed(daily_seed if daily_seed >= 0 else abs(hash("default")), plan.depth)
+	var map := _generate_map(plan, floor_seed)
 	maps[map.id] = map
 	current_map = map
 
@@ -93,9 +102,23 @@ func initialize() -> void:
 	world_initialized.emit()
 
 
-func _generate_map(plan: WorldPlan.LevelPlan) -> Map:
+func start_daily_run(role: Roles.Type = Roles.Type.KNIGHT, slug: StringName = &"knight") -> void:
+	daily_seed = SeedFactory.daily_seed()
+	run_state = RunState.new()
+	run_state.start(daily_seed)
+	run_state.player_class = Roles.get_role_data(role).name.to_lower()
+	initialize(role, slug)
+	run_started.emit(daily_seed)
+
+
+func _generate_map(plan: WorldPlan.LevelPlan, seed_value: int = -1) -> Map:
+	# Use provided seed or generate one from depth
+	if seed_value < 0:
+		seed_value = SeedFactory.floor_seed(abs(hash("default")), plan.depth)
+
 	match plan.type:
 		WorldPlan.LevelType.ARENA:
+			Dice.set_seed(seed_value)
 			var generator := MapGeneratorFactory.create_generator(
 				MapGeneratorFactory.GeneratorType.ARENA
 			)
@@ -117,16 +140,17 @@ func _generate_map(plan: WorldPlan.LevelPlan) -> Map:
 			return (
 				generator
 				. generate_map(
-					30,
 					20,
+					30,
 					{
 						# Dungeon generation parameters
-						"min_room_size": 5,
-						"max_room_size": 9,
+						"seed": seed_value,
+						"min_room_size": 4,
+						"max_room_size": 7,
 						"size_variation": 0.6,
 						"room_placement_attempts": 500,
-						"target_room_count": 30,
-						"border_buffer": 3,
+						"target_room_count": 15,
+						"border_buffer": 2,
 						"room_expansion_chance": 0.5,
 						"max_expansion_attempts": 3,
 						"horizontal_expansion_bias": 0.5,
@@ -243,9 +267,16 @@ func apply_player_action(action: BaseAction) -> ActionResult:
 	# Mark the turn as over
 	current_turn += 1
 
+	# Track in run state
+	if run_state:
+		run_state.add_turn()
+
 	# Is the player dead?
 	if player.is_dead:
 		game_over = true
+		if run_state:
+			run_state.end_run()
+			run_ended.emit(false, run_state.score)
 		game_ended.emit()
 
 	return result
@@ -274,9 +305,15 @@ func handle_level_transition(destination_level: String, coming_from_stairs: Obst
 
 	# Generate or load the next level
 	if not maps.has(destination_level):
-		var map := _generate_map(plan)
+		var floor_seed := SeedFactory.floor_seed(daily_seed if daily_seed >= 0 else abs(hash("default")), plan.depth)
+		var map := _generate_map(plan, floor_seed)
 		map.id = destination_level
 		maps[destination_level] = map
+
+	# Track floor transition in run state
+	if run_state:
+		run_state.advance_floor()
+		show_floor_transition.emit(plan.depth)
 
 	# Remove player from current map
 	current_map.find_and_remove_monster(player)

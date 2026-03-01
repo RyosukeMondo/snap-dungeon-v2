@@ -11,12 +11,10 @@ static var _rng := RandomNumberGenerator.new()
 
 
 ## Sets the seed for the dice rolling RNG.
-## @param value The seed value to use. Pass -1 for a random seed based on system time.
-static func set_seed(value: int = -1) -> void:
-	if value < 0:
-		_rng.randomize()
-	else:
-		_rng.seed = value
+## @param value The seed value to use. Must be >= 0.
+static func set_seed(value: int) -> void:
+	assert(value >= 0, "Dice.set_seed() requires a non-negative seed value")
+	_rng.seed = value
 
 
 ## Rolls dice and returns the sum.

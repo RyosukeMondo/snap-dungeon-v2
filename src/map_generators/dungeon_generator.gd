@@ -169,8 +169,10 @@ func generate_map(width: int, height: int, params: Dictionary = {}) -> Map:
 	if MonsterFactory.monster_data.is_empty():
 		MonsterFactory._static_init()
 
-	# Initialize Dice RNG
-	Dice.set_seed()
+	# Initialize Dice RNG from seed parameter
+	var seed_value: int = params.get("seed", -1)
+	assert(seed_value >= 0, "DungeonGenerator requires a 'seed' parameter >= 0")
+	Dice.set_seed(seed_value)
 
 	var depth: int = params.get("depth", 1)
 	var attempts := 50
@@ -178,8 +180,7 @@ func generate_map(width: int, height: int, params: Dictionary = {}) -> Map:
 
 	while attempts > 0:
 		map = _initialize_empty_map(width, height, depth)
-		_rng = RandomNumberGenerator.new()
-		Dice._rng = _rng
+		_rng = Dice._rng
 
 		if not _generate_basic_structure(map, width, height, params):
 			attempts -= 1
@@ -242,7 +243,7 @@ func _add_level_features(map: Map, depth: int, params: Dictionary) -> void:
 	Log.d("Adding level features")
 
 	var rooms: Array[Room] = map.rooms.duplicate()
-	rooms.shuffle()
+	rooms = Utils.shuffle_with_rng(rooms)
 
 	if params.get("has_up_stairs", true):
 		_place_up_stairs(map, rooms[0], depth)

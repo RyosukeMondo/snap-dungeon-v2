@@ -18,7 +18,7 @@ func _execute(map: Map, result: ActionResult) -> bool:
 		return false
 
 	if actor.has_status_effect(StatusEffect.Type.CONFUSED):
-		direction = Utils.ALL_DIRECTIONS.pick_random()
+		direction = Utils.pick_random_with_rng(Utils.ALL_DIRECTIONS)
 
 	if actor.has_status_effect(StatusEffect.Type.PARALYZED):
 		if actor == World.player:

@@ -89,7 +89,10 @@ func _update_display() -> void:
 	_build_armor_container(armor_container)
 
 	# Update basic status text
-	status_text.text = "Time: %d" % World.current_turn
+	if World.run_state:
+		status_text.text = "F%d  T%d  S%d" % [World.run_state.current_floor, World.current_turn, World.run_state.score]
+	else:
+		status_text.text = "Time: %d" % World.current_turn
 	var nutrition_status := World.player.nutrition.get_status()
 	if nutrition_status != Nutrition.Status.NORMAL:
 		var text := Nutrition.get_status_rich_text_label(nutrition_status)

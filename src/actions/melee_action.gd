@@ -27,7 +27,7 @@ func _execute(map: Map, result: ActionResult) -> bool:
 		return true
 
 	if actor.has_status_effect(StatusEffect.Type.CONFUSED):
-		direction = Utils.ALL_DIRECTIONS.pick_random()
+		direction = Utils.pick_random_with_rng(Utils.ALL_DIRECTIONS)
 
 	var target_pos := current_pos + direction
 

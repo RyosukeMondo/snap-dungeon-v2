@@ -165,7 +165,7 @@ class MoveRandomly:
 	extends BTNode
 
 	func tick(actor: Monster, _map: Map) -> BTStatus:
-		var move_dir := Utils.ALL_DIRECTIONS.pick_random() as Vector2i
+		var move_dir := Utils.pick_random_with_rng(Utils.ALL_DIRECTIONS) as Vector2i
 		actor.next_action = AttackMoveAction.new(actor, move_dir)
 		Log.d("  MoveRandomly: Moving in random direction %s" % move_dir)
 		return BTStatus.SUCCESS

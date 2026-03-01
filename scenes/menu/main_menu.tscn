@@ -34,22 +34,50 @@ layout_mode = 2
 [node name="Title" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_type_variation = &"TitleLabel"
-text = "Godot Roguelike Example"
+text = "SnapDungeon"
 label_settings = ExtResource("6_4mhxx")
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
+[node name="ClassSelector" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="PrevButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ClassSelector"]
+layout_mode = 2
+text = "<"
+
+[node name="ClassLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ClassSelector"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(80, 0)
+text = "Knight"
+horizontal_alignment = 1
+
+[node name="NextButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ClassSelector"]
+layout_mode = 2
+text = ">"
+
+[node name="DailyButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Daily Dungeon"
+
 [node name="PlayButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-text = "Play"
+text = "Free Play"
 
 [node name="QuitButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 text = "Quit"
 
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ClassSelector/PrevButton" to="." method="_on_class_prev_pressed"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ClassSelector/NextButton" to="." method="_on_class_next_pressed"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/DailyButton" to="." method="_on_daily_button_pressed"]
 [connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
 [connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]

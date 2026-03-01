@@ -30,23 +30,23 @@ func generate_map(width: int, height: int, _params: Dictionary = {}) -> Map:
 		&"sack",
 		&"large_box",
 	]
-	for _i in range(randi_range(5, 10)):
+	for _i in range(Dice._rng.randi_range(5, 10)):
 		var tries := 0
 		while tries < 10:
-			var x := randi_range(1, width - 2)  # Avoid edges
-			var y := randi_range(1, height - 2)
+			var x := Dice._rng.randi_range(1, width - 2)  # Avoid edges
+			var y := Dice._rng.randi_range(1, height - 2)
 			var cell: MapCell = map.cells[x][y]
 			if _is_valid_empty_floor(cell):
 				# Create random container
-				var container_type: StringName = container_types[randi() % container_types.size()]
+				var container_type: StringName = container_types[Dice._rng.randi() % container_types.size()]
 				var container := ItemFactory.create_item(container_type)
 
 				# Randomly set container as open or closed (30% chance to be open)
-				if randf() < 0.3:
+				if Dice._rng.randf() < 0.3:
 					container.open()
 
 				# Add 1-3 random items inside
-				var num_items := randi_range(1, 3)
+				var num_items := Dice._rng.randi_range(1, 3)
 				for _j in range(num_items):
 					# Get list of possible items weighted by probability
 					var possible_items: Array[StringName] = []
@@ -58,7 +58,7 @@ func generate_map(width: int, height: int, _params: Dictionary = {}) -> Map:
 
 					# Create random item from weighted list
 					if not possible_items.is_empty():
-						var item_id: StringName = possible_items[randi() % possible_items.size()]
+						var item_id: StringName = possible_items[Dice._rng.randi() % possible_items.size()]
 						var item := ItemFactory.create_item(item_id)
 
 						# If stackable, set random quantity between 1-5

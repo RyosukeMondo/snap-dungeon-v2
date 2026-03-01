@@ -90,7 +90,7 @@ static func create_monster(slug: StringName, role: Roles.Type = Roles.Type.NONE)
 	if data.appearance is Array and not (data.appearance as Array).is_empty():
 		var appearances := data.appearance as Array
 		if not appearances.is_empty():
-			monster.variant = randi() % appearances.size()
+			monster.variant = Dice._rng.randi() % appearances.size()
 
 	# If a role is specified, validate species and apply role data
 	if role != Roles.Type.NONE:

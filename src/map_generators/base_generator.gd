@@ -67,18 +67,18 @@ func _generate_bsp_rooms(
 		var max_room_h := h - 4  # -4 for 2 cell padding on each side
 
 		# Ensure room size is between min_room_size and max available space
-		var room_w: int = min(max_room_w, max(min_room_size, randi() % max_room_w))
-		var room_h: int = min(max_room_h, max(min_room_size, randi() % max_room_h))
+		var room_w: int = min(max_room_w, max(min_room_size, Dice._rng.randi() % max_room_w))
+		var room_h: int = min(max_room_h, max(min_room_size, Dice._rng.randi() % max_room_h))
 
 		# Calculate room position ensuring 1 cell padding from split boundaries
-		var room_x := start_x + 2 + randi() % (w - room_w - 2)
-		var room_y := start_y + 2 + randi() % (h - room_h - 2)
+		var room_x := start_x + 2 + Dice._rng.randi() % (w - room_w - 2)
+		var room_y := start_y + 2 + Dice._rng.randi() % (h - room_h - 2)
 
 		rooms.append(Room.new(room_x, room_y, room_w, room_h))
 		return rooms
 
 	# Split either horizontally or vertically based on horizontal_split_chance
-	if randf() < horizontal_split_chance and h > min_split_size:  # horizontal split
+	if Dice._rng.randf() < horizontal_split_chance and h > min_split_size:  # horizontal split
 		var split := start_y + int(h / 2.0)
 		debug_splits[-1].is_horizontal = true  # Update the last added split's orientation
 		rooms.append_array(
@@ -145,7 +145,6 @@ func _generate_bsp_rooms(
 # This creates more organic, packed-together rooms of different sizes
 func _generate_dungeon_rooms(width: int, height: int, params: Dictionary = {}) -> Array[Room]:
 	var rooms: Array[Room] = []
-	var rng := RandomNumberGenerator.new()
 
 	# Parameters with defaults
 	var min_room_size: int = params.get("min_room_size", 5)
@@ -176,7 +175,7 @@ func _generate_dungeon_rooms(width: int, height: int, params: Dictionary = {}) -
 
 		# Generate random room size with size variation
 		var size_range: int = max_room_size - min_room_size
-		var variation: float = size_variation * rng.randf()
+		var variation: float = size_variation * Dice._rng.randf()
 		var room_w: int = min_room_size + int(size_range * variation)
 		var room_h: int = min_room_size + int(size_range * variation)
 
@@ -185,8 +184,8 @@ func _generate_dungeon_rooms(width: int, height: int, params: Dictionary = {}) -
 		room_h = min(room_h, height - 2 * border)
 
 		# Generate random position (with border buffer)
-		var room_x: int = rng.randi_range(border, width - room_w - border)
-		var room_y: int = rng.randi_range(border, height - room_h - border)
+		var room_x: int = Dice._rng.randi_range(border, width - room_w - border)
+		var room_y: int = Dice._rng.randi_range(border, height - room_h - border)
 
 		# Check if room overlaps with existing rooms (including 1-cell buffer)
 		var can_place: bool = true
@@ -222,7 +221,7 @@ func _generate_dungeon_rooms(width: int, height: int, params: Dictionary = {}) -
 			]
 
 			# Shuffle directions for more organic results
-			directions.shuffle()
+			directions = Utils.shuffle_with_rng(directions)
 
 			# Apply horizontal expansion bias
 			if horizontal_expansion_bias != 0.5:
@@ -243,7 +242,7 @@ func _generate_dungeon_rooms(width: int, height: int, params: Dictionary = {}) -
 
 			for dir in directions:
 				# Skip expansion with random chance
-				if rng.randf() > room_expansion_chance:
+				if Dice._rng.randf() > room_expansion_chance:
 					continue
 
 				# Limit expansion attempts per room

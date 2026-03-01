@@ -119,7 +119,7 @@ static func _equip_knight(monster: Monster) -> void:
 	monster.equipment.equip(bow, Equipment.Slot.RANGED)
 
 	var arrows := ItemFactory.create_item(&"arrow")
-	arrows.quantity = randi_range(15, 25)
+	arrows.quantity = Dice._rng.randi_range(15, 25)
 	bow.add_child(arrows)
 
 	var armor := ItemFactory.create_item(&"silver_armor")
@@ -131,18 +131,18 @@ static func _equip_knight(monster: Monster) -> void:
 	monster.add_item(helm)
 	monster.equipment.equip(helm, Equipment.Slot.HEADWEAR)
 
-	for i in range(randi_range(3, 4)):
+	for i in range(Dice._rng.randi_range(3, 4)):
 		var grenade := ItemFactory.create_item(&"poison_splash_potion")
 		monster.add_item(grenade)
 
-	for i in range(randi_range(2, 4)):
+	for i in range(Dice._rng.randi_range(2, 4)):
 		monster.add_item(ItemFactory.create_item(&"food_ration"))
 
 
 static func _equip_monk(monster: Monster) -> void:
 	monster.add_item(ItemFactory.create_item(&"godot_user_guide"))
 	monster.add_item(ItemFactory.create_item(&"gdscript_reference"))
-	for i in range(randi_range(2, 4)):
+	for i in range(Dice._rng.randi_range(2, 4)):
 		monster.add_item(ItemFactory.create_item(&"apple"))
 
 
@@ -161,5 +161,5 @@ static func _equip_valkyrie(monster: Monster) -> void:
 	monster.add_item(helm)
 	monster.equipment.equip(helm, Equipment.Slot.HEADWEAR)
 
-	for i in range(randi_range(2, 4)):
+	for i in range(Dice._rng.randi_range(2, 4)):
 		monster.add_item(ItemFactory.create_item(&"food_ration"))

@@ -51,18 +51,14 @@ func _init(world_type: WorldType = WorldType.NORMAL) -> void:
 
 	match world_type:
 		WorldType.NORMAL:
-			# Create our simple 3-level dungeon plan for v1
-
-			# Level 1: Dungeon entrance
-			levels.append(
-				LevelPlan.new("level_1", LevelType.DUNGEON, 1, World.ESCAPE_LEVEL, "level_2")
-			)  # Up leads to escape  # Down leads to level 2
-
-			# Level 2: Middle level
-			levels.append(LevelPlan.new("level_2", LevelType.DUNGEON, 2, "level_1", "level_3"))  # Up leads to level 1  # Down leads to level 3
-
-			# Level 3: Final level with amulet
-			levels.append(LevelPlan.new("level_3", LevelType.DUNGEON, 3, "level_2", "", true))  # Up leads to level 2  # No down stairs  # Has the amulet flag
+			# Create a 5-floor daily dungeon
+			for i in range(1, Constants.MAX_FLOORS + 1):
+				var up_dest := World.ESCAPE_LEVEL if i == 1 else "level_%d" % (i - 1)
+				var down_dest := "" if i == Constants.MAX_FLOORS else "level_%d" % (i + 1)
+				var has_amulet := i == Constants.MAX_FLOORS
+				levels.append(
+					LevelPlan.new("level_%d" % i, LevelType.DUNGEON, i, up_dest, down_dest, has_amulet)
+				)
 
 		WorldType.ARENA:
 			# Create a simple arena

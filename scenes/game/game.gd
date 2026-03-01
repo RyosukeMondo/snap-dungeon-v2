@@ -9,6 +9,13 @@ var waiting_for_player_input: bool = false
 var _last_mouse_tile_pos: Vector2i = Utils.INVALID_POS
 var _throw_selection: Variant = null  # Track item being thrown
 
+# Touch/swipe input
+const SWIPE_MIN_DISTANCE := 20.0
+const SWIPE_MAX_TIME := 0.5
+var _touch_start_pos: Vector2 = Vector2.ZERO
+var _touch_start_time: float = 0.0
+var _is_touching: bool = false
+
 @onready var map_renderer: MapRenderer = %MapRenderer
 @onready var actors: Node2D = %Actors
 @onready var hud: HUD = %HUD
@@ -31,6 +38,13 @@ func _ready() -> void:
 
 	# Hide the hit effect rect
 	hit_effect_rect.visible = false
+
+	# Create touch action bar
+	_setup_touch_action_bar()
+
+	# Create floor transition overlay
+	var floor_transition := FloorTransitionUI.new()
+	add_child(floor_transition)
 
 	# Hook up inventory signals
 	Modals.inventory_opened.connect(
@@ -90,6 +104,48 @@ func _initialize() -> void:
 
 	# Update actors
 	_update_actors()
+
+
+func _setup_touch_action_bar() -> void:
+	var bar := TouchActionBar.new()
+	bar.anchor_bottom = 1.0
+	bar.anchor_left = 0.0
+	bar.anchor_right = 1.0
+	bar.offset_bottom = 0
+	bar.offset_top = -48
+	bar.action_pressed.connect(_on_touch_action)
+	hud.add_child(bar)
+
+
+func _on_touch_action(action_name: StringName) -> void:
+	if not waiting_for_player_input or World.game_over:
+		return
+
+	match action_name:
+		&"inventory":
+			Modals.toggle_inventory(InventoryModal.Tab.INVENTORY)
+		&"pickup":
+			var pos := World.current_map.find_monster_position(World.player)
+			var items := World.current_map.get_items(pos)
+			var selections: Array[ItemSelection] = []
+			for item in items:
+				selections.append(ItemSelection.new(item, item.quantity))
+			if not selections.is_empty():
+				waiting_for_player_input = false
+				_handle_player_action(PlayerPickupAction.new(selections))
+		&"wait":
+			waiting_for_player_input = false
+			_handle_player_action(PlayerRestAction.new())
+		&"stairs":
+			var pos := World.current_map.find_monster_position(World.player)
+			var obstacle := World.current_map.get_obstacle(pos)
+			if obstacle:
+				if obstacle.type == Obstacle.Type.STAIRS_UP:
+					waiting_for_player_input = false
+					_handle_player_action(PlayerMoveUpstairsAction.new())
+				elif obstacle.type == Obstacle.Type.STAIRS_DOWN:
+					waiting_for_player_input = false
+					_handle_player_action(PlayerMoveDownstairsAction.new())
 
 
 func _process(_delta: float) -> void:
@@ -201,10 +257,43 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("toggle_debug"):
 		hud.debug_mode = not hud.debug_mode
 
+	# Handle touch/swipe input
+	if event is InputEventScreenTouch:
+		var touch := event as InputEventScreenTouch
+		if touch.pressed:
+			_touch_start_pos = touch.position
+			_touch_start_time = Time.get_ticks_msec() / 1000.0
+			_is_touching = true
+		elif _is_touching:
+			_is_touching = false
+			var swipe_action := _process_swipe(touch.position)
+			if swipe_action:
+				waiting_for_player_input = false
+				_handle_player_action(swipe_action)
+				return
+
 	var action := await _check_player_input()
 	if action:
 		waiting_for_player_input = false
 		_handle_player_action(action)
+
+
+func _process_swipe(end_pos: Vector2) -> BaseAction:
+	var delta := end_pos - _touch_start_pos
+	var distance := delta.length()
+	var elapsed := Time.get_ticks_msec() / 1000.0 - _touch_start_time
+
+	if distance < SWIPE_MIN_DISTANCE or elapsed > SWIPE_MAX_TIME:
+		return null
+
+	# Determine swipe direction (4-way cardinal)
+	var direction: Vector2i
+	if abs(delta.x) > abs(delta.y):
+		direction = Vector2i.RIGHT if delta.x > 0 else Vector2i.LEFT
+	else:
+		direction = Vector2i.DOWN if delta.y > 0 else Vector2i.UP
+
+	return PlayerAttackMoveAction.new(direction)
 
 
 func _check_player_input() -> BaseAction:

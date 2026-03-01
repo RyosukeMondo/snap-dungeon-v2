@@ -34,7 +34,7 @@ func _execute(map: Map, result: ActionResult) -> bool:
 
 	# If the actor is confused, pick a random adjacent position
 	if actor.has_status_effect(StatusEffect.Type.CONFUSED):
-		target_pos = source_pos + Utils.ALL_DIRECTIONS.pick_random()
+		target_pos = source_pos + Utils.pick_random_with_rng(Utils.ALL_DIRECTIONS) as Vector2i
 
 	# Get the wielded weapon
 	var weapon := actor.equipment.get_equipped_item(Equipment.Slot.RANGED)

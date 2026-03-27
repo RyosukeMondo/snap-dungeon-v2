@@ -17,7 +17,7 @@ func _execute(map: Map, result: ActionResult) -> bool:
 
 	# Get actor's current position
 	var current_pos := map.find_monster_position(actor)
-	if not current_pos:
+	if current_pos == Utils.INVALID_POS:
 		return false
 
 	# If no selections provided, pick up top item

@@ -19,7 +19,7 @@ func _execute(map: Map, result: ActionResult) -> bool:
 
 	# Get the actor's position
 	var source_pos := map.find_monster_position(actor)
-	if not source_pos:
+	if source_pos == Utils.INVALID_POS:
 		Log.e("Actor not found in map: %s" % actor)
 		return false
 

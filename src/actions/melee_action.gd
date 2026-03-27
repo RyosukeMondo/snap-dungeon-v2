@@ -14,7 +14,7 @@ func _execute(map: Map, result: ActionResult) -> bool:
 		return false
 
 	var current_pos := map.find_monster_position(actor)
-	if not current_pos:
+	if current_pos == Utils.INVALID_POS:
 		return false
 
 	if actor.has_status_effect(StatusEffect.Type.PARALYZED):

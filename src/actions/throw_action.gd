@@ -28,14 +28,6 @@ func _execute(map: Map, result: ActionResult) -> bool:
 		return false
 	var item: Item = selections[0].item
 
-	# Split off one item if we're throwing from a stack
-	var thrown_item: Item
-	if item.quantity > 1:
-		thrown_item = item.split(1)
-	else:
-		thrown_item = item
-		World.player.remove_item(item)  # Remove the entire item if it's the last one
-
 	# Get the actor's position
 	var current_pos := map.find_monster_position(actor)
 	if not current_pos:
@@ -51,6 +43,14 @@ func _execute(map: Map, result: ActionResult) -> bool:
 			result.message = "%s tries to throw something but is paralyzed!" % actor.name
 			result.message_level = LogMessages.Level.BAD
 		return true
+
+	# Split off one item if we're throwing from a stack
+	var thrown_item: Item
+	if item.quantity > 1:
+		thrown_item = item.split(1)
+	else:
+		thrown_item = item
+		actor.remove_item(item)  # Remove the entire item if it's the last one
 
 	# Resolve the ranged attack
 	var throw_result := Combat.resolve_thrown_item(map, actor, target_pos, thrown_item)

@@ -498,12 +498,9 @@ func get_max_carrying_capacity() -> int:
 func get_current_load() -> int:
 	var total_mass := 0
 
-	# Add inventory items (using recursive mass calculation)
+	# Add inventory items (using recursive mass calculation).
+	# Equipped items are also in inventory, so this covers everything.
 	for item: Item in inventory.to_array():
-		total_mass += int(item.get_mass())
-
-	# Add equipped items (using recursive mass calculation)
-	for item in equipment.get_all_equipped_items():
 		total_mass += int(item.get_mass())
 
 	return total_mass

@@ -351,7 +351,8 @@ func update_area_effects() -> void:
 			var pos := Vector2i(x, y)
 
 			# Check for armed grenades and handle their countdown
-			for item in cell.items:
+			# Iterate over a copy since we may remove items during iteration
+			for item in cell.items.duplicate():
 				if item.type == Item.Type.GRENADE and item.is_armed:
 					item.turns_to_activate -= 1
 					if item.turns_to_activate <= 0:
@@ -382,17 +383,21 @@ func update_area_effects() -> void:
 
 			# Apply damage from each effect
 			for effect in cell.area_effects:
-				if cell.monster:
+				if cell.monster and not cell.monster.is_dead:
 					var monster: Monster = cell.monster
 					var result := Combat.resolve_aoe_damage(monster, effect.damage, effect.type)
 					if result.killed:
 						monster.is_dead = true
-						if monster != player:
+						effect_occurred.emit(DeathEffect.new(monster, pos, monster == player))
+						if monster == player:
+							messages.append("You are killed!")
+							game_over = true
+						else:
 							messages.append(
 								"%s is killed!" % monster.get_name(Monster.NameFormat.THE)
 							)
-							effect_occurred.emit(DeathEffect.new(monster, pos, monster == player))
 							monster.drop_everything()
+							current_map.find_and_remove_monster(monster)
 			# Update effect durations
 			cell.update_effects()
 

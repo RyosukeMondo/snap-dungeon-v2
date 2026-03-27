@@ -26,6 +26,7 @@ func _execute(map: Map, result: ActionResult) -> bool:
 			result.message_level = LogMessages.Level.TERRIBLE
 		else:
 			result.message = "%s tries to move but is paralyzed!" % actor.name
+		return true
 
 	var new_pos := current_pos + direction
 

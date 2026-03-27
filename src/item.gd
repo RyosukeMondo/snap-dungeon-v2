@@ -239,26 +239,16 @@ func is_ranged_weapon() -> bool:
 	return type == Type.GUN or type == Type.THROWABLE
 
 
-func add_child(item: Item, at_index: int = -1) -> bool:
+func add_child(item: Item, _at_index: int = -1) -> bool:
 	if item.parent != null:
 		item.parent.remove_child(item)
 
-	# Add the item at the specified index
-	if at_index != -1:
-		# Check if we can add more children
-		if max_children <= 0 or children.size() >= max_children:
-			Log.e("Cannot add more children")
-			return false
+	# Check if we can add more children
+	if max_children <= 0 or children.size() >= max_children:
+		Log.e("Cannot add more children")
+		return false
 
-		children.add(item)
-	else:
-		# Check if we can add more children
-		if max_children <= 0 or children.size() >= max_children:
-			Log.e("Cannot add more children")
-			return false
-
-		children.add(item)
-
+	children.add(item)
 	item.parent = self
 	return true
 

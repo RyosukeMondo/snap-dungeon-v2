@@ -340,15 +340,10 @@ func drop_everything() -> void:
 func get_armor_class() -> int:
 	var total_ac := 0
 
-	# Check each equipment slot
+	# get_all_equipped_items() already includes both parent items and their
+	# children (modules, ammo), so we only need a single loop.
 	for item: Item in equipment.get_all_equipped_items():
-		# Add base AC from item
 		total_ac += item.armor_class
-
-		# Add AC from any attached modules
-		for child: Item in item.children.to_array():
-			if child:
-				total_ac += child.armor_class
 
 	return total_ac
 
@@ -368,20 +363,13 @@ func get_resistances() -> Dictionary:
 			resistances[resistance] = 0
 		resistances[resistance] += 1
 
-	# Add resistances from equipped items
+	# Add resistances from equipped items. get_all_equipped_items() already
+	# includes both parent items and their children (modules, ammo).
 	for item in equipment.get_all_equipped_items():
 		for resistance: Damage.Type in item.resistances:
 			if resistance not in resistances:
 				resistances[resistance] = 0
 			resistances[resistance] += 1
-
-		# Add resistances from any attached modules
-		for child: Item in item.children.to_array():
-			if child:
-				for resistance: Damage.Type in child.resistances:
-					if resistance not in resistances:
-						resistances[resistance] = 0
-					resistances[resistance] += 1
 
 	return resistances
 

@@ -14,6 +14,7 @@ const COLORS = {
 const IGNORED_CLASSES = ["DungeonGenerator", "Equipment", "Map"]
 
 static var _last_message := ""
+static var _class_name_cache: Dictionary = {}
 
 
 static func d(
@@ -77,8 +78,7 @@ static func _log(level: LogLevel, msg: String, args: Array) -> void:
 	var stack := get_stack()
 	var classname := ""
 	if stack.size() > 2:
-		var frame: Dictionary = get_stack()[2]
-		classname = _get_class_name(frame)
+		classname = _get_class_name(stack[2])
 
 	if classname in IGNORED_CLASSES:
 		return
@@ -149,8 +149,13 @@ static func _get_class_name(frame: Dictionary) -> String:
 	if path == null:
 		return "Unknown"
 
+	# Check cache first to avoid repeated file I/O
+	if _class_name_cache.has(path):
+		return _class_name_cache[path]
+
 	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
 	if not file:
+		_class_name_cache[path] = "Unknown"
 		return "Unknown"
 
 	var classname := ""
@@ -166,4 +171,6 @@ static func _get_class_name(frame: Dictionary) -> String:
 			break
 
 	file.close()
-	return classname if classname else path.get_file().get_basename()
+	var result := classname if classname else path.get_file().get_basename()
+	_class_name_cache[path] = result
+	return result

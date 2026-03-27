@@ -590,11 +590,14 @@ static func create_behavior_tree(monster: Monster) -> BTNode:
 			)
 
 		Monster.Behavior.FEARFUL:
-			return sequence(
-				CheckPlayerVisible,
-				FleeFromPlayer,
+			return selector(
+				# Flee if the player is visible
+				sequence(
+					CheckPlayerVisible,
+					FleeFromPlayer,
+				),
 				# Otherwise stay still
-				DoNothing
+				DoNothing,
 			)
 
 		Monster.Behavior.CURIOUS:

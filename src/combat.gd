@@ -272,6 +272,10 @@ static func resolve_ranged_attack(
 		if pos == source_pos:
 			continue
 
+		# Stop if out of bounds
+		if not map.is_in_bounds(pos):
+			break
+
 		# Check for monster hit
 		var monster := map.get_monster(pos)
 		if monster:
@@ -478,6 +482,11 @@ static func resolve_thrown_item(
 	for pos in points:
 		if pos == source_pos:
 			continue
+
+		# Stop if out of bounds
+		if not map.is_in_bounds(pos):
+			result.end_pos = pos
+			break
 
 		# Chance to hit a monster based on throwing skill
 		var monster := map.get_monster(pos)

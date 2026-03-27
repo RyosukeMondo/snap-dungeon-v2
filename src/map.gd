@@ -38,18 +38,24 @@ func _to_string() -> String:
 	return "Map(id: %s, depth: %d, width: %d, height: %d)" % [id, depth, width, height]
 
 
-## Gets the cell at the specified position
+## Gets the cell at the specified position. Returns null if out of bounds.
 func get_cell(pos: Vector2i) -> MapCell:
+	if not is_in_bounds(pos):
+		return null
 	return cells[pos.x][pos.y]
 
 
-## Gets the terrain at the specified position
+## Gets the terrain at the specified position. Returns null if out of bounds.
 func get_terrain(pos: Vector2i) -> Terrain:
+	if not is_in_bounds(pos):
+		return null
 	return cells[pos.x][pos.y].terrain
 
 
-## Gets the obstacle at the specified position
+## Gets the obstacle at the specified position. Returns null if out of bounds.
 func get_obstacle(pos: Vector2i) -> Obstacle:
+	if not is_in_bounds(pos):
+		return null
 	return cells[pos.x][pos.y].obstacle
 
 
@@ -68,8 +74,10 @@ func get_top_item(pos: Vector2i) -> Item:
 	return items[items.size() - 1] if items.size() > 0 else null
 
 
-## Gets the monster at the specified position
+## Gets the monster at the specified position. Returns null if out of bounds.
 func get_monster(pos: Vector2i) -> Monster:
+	if not is_in_bounds(pos):
+		return null
 	return cells[pos.x][pos.y].monster
 
 

@@ -31,10 +31,14 @@ func _execute(map: Map, result: ActionResult) -> bool:
 
 	var new_pos: Vector2i = current_pos + direction
 
+	# Check bounds first
+	if not map.is_in_bounds(new_pos):
+		return false
+
 	# Check if target position is walkable
-	if not map.get_cell(new_pos).is_walkable():
+	var target_cell: MapCell = map.get_cell(new_pos)
+	if not target_cell.is_walkable():
 		# Check if there's a pushable obstacle
-		var target_cell: MapCell = map.get_cell(new_pos)
 		if target_cell.obstacle and target_cell.obstacle.is_pushable():
 			if _try_push_obstacle(map, current_pos, direction, result):
 				# The push was successful, but the actor stays in place

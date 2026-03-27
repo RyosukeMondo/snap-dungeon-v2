@@ -609,7 +609,6 @@ func render_area_effects(map: Map) -> void:
 							preload("res://scenes/fx/splatter_green.tscn").instantiate()
 						)
 						(node.get_node("%Splatter") as AnimatedSprite2D).frame = randi_range(0, 8)
-						add_child(node)
 						(node.get_node("%Bubbles") as GPUParticles2D).preprocess = randf()
 						node.position = (
 							Vector2(x, y) * Constants.TILE_SIZE + Constants.HALF_TILE_SIZE_VEC2
